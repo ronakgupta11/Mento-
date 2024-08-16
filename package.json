@@ -13,6 +13,8 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
+    "@huddle01/react": "^2.1.4",
+    "@huddle01/server-sdk": "^2.3.5",
     "@tanstack/react-query": "^5.51.21",
     "@web3modal/wagmi": "^5.0.11",
     "framer-motion": "^11.3.24",

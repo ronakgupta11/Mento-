@@ -5,55 +5,58 @@ import { address, abi } from "../../constants";
 import styles from "../../styles/style";
 import { Navbar } from "../../components";
 import { useReadContract } from 'wagmi'
+import { baseSepolia, sepolia } from "viem/chains";
 
 export default function Gigs() {
-    interface Gig {
-        host: string;
-        title: string;
-        description: string;
-        time: string; // Adjust based on actual type
-        meetingId: string; // Adjust based on actual type
-        flowRate: number;
-        stringFlowRate: string;
-        gigId: number;
-        nftTokenId: number;
-        attendees: number;
-      }
+    // interface Gig {
+    //     host: string;
+    //     title: string;
+    //     description: string;
+    //     time: string; // Adjust based on actual type
+    //     meetingId: string; // Adjust based on actual type
+    //     flowRate: number;
+    //     stringFlowRate: string;
+    //     gigId: number;
+    //     nftTokenId: number;
+    //     attendees: number;
+    //   }
       
-      const [gigs, setGigs] = useState<Gig[]>([]);
-    const result: any = useReadContract({
+      const [gigs, setGigs] = useState([]);
+    const {isPending, isError, data, error} = useReadContract({
       abi: abi,
       address: address,
-      functionName: 'listGigs'
+      functionName: 'listGigs',
+      chainId: sepolia.id
     });
+
+//     useEffect(() => {
+//       const fetchData = async () => {
+        
+//         const data = await Promise.all(result.map(async (i) => {
+//           let parseStringFlowRate = i.stringFlowRate;
+//           let item = {
+//             host: i.host.toString(),
+//             title: i.title,
+//             description: i.description,
+//             time: i.time,
+//             meetingId: i.meetingId,
+//             flowRate: i.flowRate.toNumber(),
+//             stringFlowRate: parseStringFlowRate,
+//             gigId: i.gigId.toNumber(),
+//             nftTokenId: i.nftTokenId.toNumber(),
+//             attendees: i.attendees.toNumber(),
+//           };
+//           return item;
+//         }));
+//         setGigs(data);
+//       };
     
-    useEffect(() => {
-      const fetchData = async () => {
-        const data = await Promise.all(result.map(async (i: any) => {
-          let parseStringFlowRate = i.stringFlowRate;
-          let item = {
-            host: i.host.toString(),
-            title: i.title,
-            description: i.description,
-            time: i.time,
-            meetingId: i.meetingId,
-            flowRate: i.flowRate.toNumber(),
-            stringFlowRate: parseStringFlowRate,
-            gigId: i.gigId.toNumber(),
-            nftTokenId: i.nftTokenId.toNumber(),
-            attendees: i.attendees.toNumber(),
-          };
-          return item;
-        }));
-        setGigs(data);
-      };
+//       if (result && result.length > 0) {
+//         fetchData();
+//       }
+//     }, [result]);
     
-      if (result && result.length > 0) {
-        fetchData();
-      }
-    }, [result]);
-    
-console.log("Gigggggs",Gigs)
+// console.log("Gigggggs",Gigs)
 
     // async function fetchAllGigs() {
     //     const provider = await getEthersProvider();
@@ -105,9 +108,9 @@ console.log("Gigggggs",Gigs)
     //     fetchAllGigs();
     // }
 
-    function Card(prop:any) {
-        const add0 = (t:any) => t < 10 ? `0${t}` : String(t);
-        const getDateStandard = (dt:any) => {
+    function Card(prop) {
+        const add0 = (t) => t < 10 ? `0${t}` : String(t);
+        const getDateStandard = (dt) => {
             const y = dt.getFullYear();
             const m = add0(dt.getMonth() + 1);
             const d = add0(dt.getDate()); //day of month
@@ -147,6 +150,13 @@ console.log("Gigggggs",Gigs)
             </div>
         );
     }
+    if (isPending) {
+        return <span>Loading...</span>
+      }
+    
+      if (isError) {
+        return <span>Error: {error.message}</span>
+      }
 
     return (
         <div className="bg-primary w-full overflow-hidden min-h-screen">
@@ -164,9 +174,27 @@ console.log("Gigggggs",Gigs)
             </div>
             <div>
                 <div className="pb-20">
-                    {gigs.map((item, i) => (
+                    
+                    {data.map((i, k) => {
+                        let parseStringFlowRate = i.stringFlowRate;
+                        let item = {
+                          host: i.host.toString(),
+                          title: i.title,
+                          description: i.description,
+                          time: i.time,
+                          meetingId: i.meetingId,
+                          flowRate: i.flowRate,
+                          stringFlowRate: parseStringFlowRate,
+                          gigId: i.gigId,
+                          nftTokenId: i.nftTokenId,
+                          attendees: i.attendees,
+                        };
+                    
+
+
+                        return(
                         <Card
-                            key={i}
+                            key={k}
                             host={item.host}
                             title={item.title}
                             description={item.description}
@@ -176,7 +204,7 @@ console.log("Gigggggs",Gigs)
                             stringFlowRate={item.stringFlowRate}
                             gigId={item.gigId}
                         />
-                    ))}
+                    )})}
                 </div>
             </div>
         </div>

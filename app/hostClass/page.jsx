@@ -8,8 +8,6 @@ import { Input, Stack } from "@chakra-ui/react";
 import {
     FormControl,
     FormLabel,
-    FormErrorMessage,
-    FormHelperText,
     NumberInput,
     NumberInputField,
     NumberInputStepper,

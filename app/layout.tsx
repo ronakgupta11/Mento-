@@ -1,5 +1,5 @@
-
 // app/layout.tsx
+
 import './globals.css'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
@@ -27,8 +27,9 @@ export default function RootLayout({
         <Web3ModalProvider initialState={initialState}>
           <Providers>
 
-
+          {/* <HuddleProvider client={huddleClient}> */}
           {children}
+          {/* </HuddleProvider> */}
           </Providers>
           </Web3ModalProvider>
       </body>
