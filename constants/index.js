@@ -138,7 +138,7 @@ export const footerLinks = [
     links: [
       {
         name: "Github",
-        link: "https://github.com/anshss/superfluid-project",
+        link: "https://github.com/ronakgupta11/Mento-",
       },
       // {
       //   name: "Become a Partner",
