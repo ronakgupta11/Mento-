@@ -5,9 +5,11 @@ import styles from "../../styles/style";
 import { Navbar } from "../../components";
 import { useReadContract } from 'wagmi'
 import { sepolia } from "viem/chains";
+import { useWriteContract } from "wagmi";
 
 export default function Gigs() {
   const [gigs, setGigs] = useState([]);
+  const {writeContract} = useWriteContract()
   
   const { isPending, isError, data, error } = useReadContract({
     abi: abi,
@@ -80,7 +82,15 @@ export default function Gigs() {
                                 <p className="text-center text-black">Price: {prop.price} Tokens</p>
                                 <button
                                     type="button"
-                                    onClick={() => console.log(prop)}
+                                    onClick={() =>writeContract({ 
+                                        abi,
+                                        address,
+                                        functionName: 'buy',
+                                        args: [
+                                          prop.id
+                                        ],
+                                        value:prop.price
+                                     })}
                                     className={`py-4 mt-2 px-12 font-poppins font-medium text-[18px] text-primary bg-blue-gradient rounded-[10px] outline-none ${styles}`}
                                 >
                                     Buy
@@ -123,6 +133,7 @@ export default function Gigs() {
             <Card
 
               key={k}
+              id={k}
               host={gig.host}
               title={gig.title}
               description={gig.description}

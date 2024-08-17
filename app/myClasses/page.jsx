@@ -5,7 +5,6 @@ import { address as contractAddress, abi } from "../../constants";
 import styles from "../../styles/style";
 import { Navbar } from "../../components";
 import { 
-    useHuddle01, 
     useRemoteAudio,
     useRemoteVideo,
     useRemoteScreenShare,
@@ -21,7 +20,6 @@ import { sepolia } from "viem/chains";
 import { Audio, Video } from "@huddle01/react/components";
 
 export default function MyClasses() {
-    const { initialize, isInitialized } = useHuddle01();
     const { joinLobby } = useLobby();
     const { stream: localVideoStream, enableVideo, disableVideo, isVideoOn } = useLocalVideo();
     const { stream: localAudioStream, enableAudio, disableAudio, isAudioOn } = useLocalAudio();
@@ -57,13 +55,9 @@ export default function MyClasses() {
         }
     }, [data]);
 
-    const videoRef = useRef();
     const { peerIds } = usePeerIds();
 
-    // useEventListener("lobby:cam-on", () => {
-    //     if (localVideoStream && videoRef.current)
-    //         videoRef.current.srcObject = localVideoStream;
-    // });
+
     async function produceHardware() {
         // if (fetchVideoStream.isCallable) {
         //     fetchVideoStream();
@@ -100,6 +94,34 @@ export default function MyClasses() {
         if (shareStream) stopScreenShare();
     }
 
+    // Join room
+const join = async () => {
+    await joinRoom({
+      roomId,
+      tokenId
+    })
+  }
+   
+  // Leave room
+  const leave = async () => {
+    await leaveRoom()
+  }
+
+  const RemotePeer  = ({ peerId }) => {
+  
+    const { stream: videoStream } = useRemoteVideo({ peerId });
+    const { stream: audioStream } = useRemoteAudio({ peerId });
+    const { videoStream: screenVideoStream, audioStream: screenAudioStream } = useRemoteScreenShare({ peerId });
+   
+    return (
+      <div>
+        {videoStream && <Video stream={videoStream}/>}
+        {audioStream && <Audio stream={audioStream}/>}
+        {screenVideoStream && <Video stream={screenVideoStream}/>}
+        {screenAudioStream && <Audio stream={screenAudioStream}/>}
+      </div>
+    ) }
+  
     function Card({ gig }) {
         const add0 = (t) => (t < 10 ? `0${t}` : String(t));
         const getDateStandard = (dt) => {
@@ -174,26 +196,11 @@ export default function MyClasses() {
                         ))}
                     </div>
                     <div className="flex-1 flex flex-col items-center">
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            muted
-                            className="w-96 h-auto p-8 rounded-lg bg-black-gradient-3 text-black"
-                        ></video>
+                    {localVideoStream && <Video stream={localVideoStream}/>}
                         <div className="w-96 h-auto mt-5 mb-5 rounded-lg bg-black-gradient-3 text-white">
-                            {peerIds.map((peerId) => (
-                                <Video
-                                    key={peerId}
-                                    peerId={peerId}
-                                    className="h-full w-full"
-                                />
-                            ))}
-                            {peerIds.map((peerId) => (
-                                <Audio
-                                    key={peerId}
-                                    peerId={peerId}
-                                />
-                            ))}
+                            {peerIds.map(peerId => {
+        return <RemotePeer peerId={peerId}  />
+      })}
                         </div>
                         <div className="flex gap-2">
                             <button 
@@ -206,16 +213,11 @@ export default function MyClasses() {
                             >
                                 {isAudioOn ? "Stop Audio" : "Start Audio"}
                             </button>
-                            <button 
-                                onClick={() => shareStream ? stopScreenShare() : startScreenShare()}
-                            >
-                                {shareStream ? "Stop Screen Share" : "Start Screen Share"}
-                            </button>
                         </div>
                         <div className="flex gap-2 mt-4">
                             <button
-                                disabled={!joinRoom.isCallable}
-                                onClick={joinRoom}
+                                disabled={!join.isCallable}
+                                onClick={join}
                             >
                                 Join Room
                             </button>
