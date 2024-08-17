@@ -190,7 +190,7 @@ export const clients = [
   },
 ];
 
-export const address = "0xcC260250980c77F56d6570eec76ECAE839E8a822"
+export const address = "0x21c300Da56618C303f3BDBF7c5C24F717E7Ac06c"
 
 export const abi = [
 	{
@@ -230,13 +230,18 @@ export const abi = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "_flowRate",
+				"name": "_price",
 				"type": "uint256"
 			},
 			{
-				"internalType": "uint256",
-				"name": "stringFlowRate",
-				"type": "uint256"
+				"internalType": "string",
+				"name": "_banner",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "_paymentToken",
+				"type": "address"
 			}
 		],
 		"name": "createGig",
@@ -729,12 +734,7 @@ export const abi = [
 			},
 			{
 				"internalType": "uint256",
-				"name": "flowRate",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "stringFlowRate",
+				"name": "price",
 				"type": "uint256"
 			},
 			{
@@ -751,6 +751,16 @@ export const abi = [
 				"internalType": "uint256",
 				"name": "attendees",
 				"type": "uint256"
+			},
+			{
+				"internalType": "string",
+				"name": "banner",
+				"type": "string"
+			},
+			{
+				"internalType": "address",
+				"name": "paymentToken",
+				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -813,12 +823,7 @@ export const abi = [
 					},
 					{
 						"internalType": "uint256",
-						"name": "flowRate",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "stringFlowRate",
+						"name": "price",
 						"type": "uint256"
 					},
 					{
@@ -835,6 +840,16 @@ export const abi = [
 						"internalType": "uint256",
 						"name": "attendees",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "banner",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "paymentToken",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Mento.Gig[]",
@@ -897,12 +912,7 @@ export const abi = [
 					},
 					{
 						"internalType": "uint256",
-						"name": "flowRate",
-						"type": "uint256"
-					},
-					{
-						"internalType": "uint256",
-						"name": "stringFlowRate",
+						"name": "price",
 						"type": "uint256"
 					},
 					{
@@ -919,6 +929,16 @@ export const abi = [
 						"internalType": "uint256",
 						"name": "attendees",
 						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "banner",
+						"type": "string"
+					},
+					{
+						"internalType": "address",
+						"name": "paymentToken",
+						"type": "address"
 					}
 				],
 				"internalType": "struct Mento.Gig[]",
