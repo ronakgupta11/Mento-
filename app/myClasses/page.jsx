@@ -6,21 +6,18 @@ import { useState, useEffect, useRef } from "react";
 import { address, abi } from "../../constants";
 import styles from "../../styles/style";
 import { Navbar } from "../../components";
-
-import { useHuddle01 ,useEventListener} from "@huddle01/react/hooks";
-import { useLocalVideo, useLocalAudio, useLocalScreenShare } from '@huddle01/react/hooks';
+import { useLocalPeer } from "@huddle01/react/hooks";
+import { useHuddle01 ,useRoom} from "@huddle01/react/hooks";
+import { useLocalVideo, useLocalAudio, useLocalScreenShare,useLobby,usePeers } from '@huddle01/react/hooks';
 import { 
     usePeerIds, 
     useRemoteVideo, 
     useRemoteAudio, 
     useRemoteScreenShare 
   } from '@huddle01/react/hooks';
-import {
-
-    useRoom,
-} from "@huddle01/react/hooks";
+  import { useEventListener } from "@huddle01/iframe";
 import { Audio, Video } from "@huddle01/react/components";
-
+import Web3Modal from "web3modal";
 export default function MyClasses() {
     // const receiverAddress = `0x248F5db296Ae4D318816e72c25c93e620341f621`;
     // const flowRate = `385802469135802`;
@@ -30,13 +27,17 @@ export default function MyClasses() {
     const { stream:localVideoStream, enableVideo, disableVideo, isVideoOn } = useLocalVideo();
     const { stream:localAudioStream, enableAudio, disableAudio, isAudioOn } = useLocalAudio();
     const { startScreenShare, stopScreenShare, shareStream } = useLocalScreenShare();
-
     const { joinRoom, leaveRoom } = useRoom();
 
     const videoRef = useRef();
-    const { peers } = usePeers();
-
-
+    // const { peers } = usePeers();
+     const {
+        peerIds
+      } = usePeerIds({
+      roles: [],
+      labels: [],
+      onPeerRoleUpdate(data) {}
+      });
 
     async function runHardware() {
         if (fetchVideoStream.isCallable) {
@@ -73,6 +74,7 @@ export default function MyClasses() {
     useEventListener("lobby:cam-on", () => {
         if (camStream && videoRef.current)
             videoRef.current.srcObject = camStream;
+        
     });
 
     const superTokenAddress = `0x96B82B65ACF7072eFEb00502F45757F254c2a0D4`;
@@ -98,7 +100,7 @@ export default function MyClasses() {
         sfInitialize();
         fetchUserAddress();
         fetchMyClasses();
-        initialize("KL1r3E1yHfcrRbXsT4mcE-3mK60Yc3YR");
+        // initialize("KL1r3E1yHfcrRbXsT4mcE-3mK60Yc3YR");
     }, []);
 
     async function getEthersProvider() {
@@ -123,7 +125,7 @@ export default function MyClasses() {
     }
 
     async function fetchUserAddress() {
-        const modal = new web3modal({
+        const modal = new Web3Modal({
             network: "mumbai",
             cacheProvider: true,
         });
@@ -345,27 +347,25 @@ export default function MyClasses() {
                         ></video>
                         {/* <div className="w-96 h-96 bg-white text-black"> */}
                         <div className=" w-96 h-auto mt-5 mb-5 rounded-lg bg-black-gradient-3 text-white ">
-                            {Object.values(peers)
-                                .filter((peer) => peer.cam)
-                                .map((peer) => (
+                            {
+                                peerIds.map((peer) => (
                                     <>
                                         {/* role: {peer.role} */}
                                         <Video
-                                            key={peer.peerId}
-                                            peerId={peer.peerId}
-                                            track={peer.cam}
+                                            key={peer}
+                                            peerId={peer}
+                                            // track={peer.cam}
                                             debug
                                             className="h-full w-full"
                                         />
                                     </>
                                 ))}
-                            {Object.values(peers)
-                                .filter((peer) => peer.mic)
-                                .map((peer) => (
+                            {
+                                peerIds.map((peer) => (
                                     <Audio
-                                        key={peer.peerId}
-                                        peerId={peer.peerId}
-                                        track={peer.mic}
+                                        key={peer}
+                                        peerId={peer}
+                                        track={peer}
                                     />
                                 ))}
                         </div>
@@ -373,38 +373,29 @@ export default function MyClasses() {
                         {/* ----------- */}
 
                         <div className="flex gap-2">
-                            {/* Webcam */} Video :
-                            <button
-                                disabled={!fetchVideoStream.isCallable}
-                                onClick={fetchVideoStream}
-                            >
-                                on
-                            </button>
-                            {/* Webcam */}
-                            <button
-                                disabled={!stopVideoStream.isCallable}
-                                onClick={stopVideoStream}
-                            >
-                                off
-                            </button>
-                        </div>
-
-                        {/* ----------- */}
-
-                        <div className="flex gap-2">
-                            {/* Mic */}Audio :{/* Mic */}
-                            <button
-                                disabled={!fetchAudioStream.isCallable}
-                                onClick={fetchAudioStream}
-                            >
-                                on
-                            </button>
-                            <button
-                                disabled={!stopAudioStream.isCallable}
-                                onClick={stopAudioStream}
-                            >
-                                off
-                            </button>
+                            {/* Webcam */} 
+        <button 
+          onClick={() => {
+            isVideoOn ? disableVideo() : enableVideo()
+          }}>
+          Fetch and Produce Video Stream
+        </button>
+ 
+        {/* Mic */} 
+       <button 
+          onClick={() => {
+            isAudioOn ? disableAudio() : enableAudio();
+          }}>
+          Fetch and Produce Audio Stream
+        </button>
+ 
+        {/* Screen Share */}
+        <button 
+          onClick={() => {
+            shareStream ? stopScreenShare() : startScreenShare();
+          }}>
+          Fetch and Produce Screen Share Stream
+        </button>
                         </div>
 
                         {/* ----------- */}
