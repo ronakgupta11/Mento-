@@ -54,12 +54,12 @@ export default function Gigs() {
     const dateTime = new Date(parseInt(prop.time) * 1000);
 
     return (
-        <div className={`bg-primary ${styles.flexStart} mb-6`}>
+        <div className={`bg-primary ${styles.flexStart} w-[70%] mx-auto mt-6 mb-6 px-[1.5rem]`}>
             <div className={`${styles.boxWidth} bg-white rounded-lg shadow-lg overflow-hidden`}>
                 {/* Banner Image */}
                 {prop.banner && (
-                    <div className="h-56 w-full bg-cover bg-center" style={{ backgroundImage: `url(${prop.banner})` }}>
-                        <img src={prop.banner} alt={prop.title} className="w-full h-full object-cover" />
+                    <div className="h-56 w-[80%] bg-cover bg-center  mx-auto" style={{ backgroundImage: `url(${prop.banner})` }}>
+                        
                     </div>
                 )}
                 <section className={`${styles.flexCenter} p-6 sm:flex-row flex-col`}>
@@ -77,7 +77,7 @@ export default function Gigs() {
                                 </p>
                             </div>
                             <div className="flex flex-1 justify-center items-end flex-col">
-                                <p className="text-black">Price: {prop.price} Tokens</p>
+                                <p className="text-center text-black">Price: {prop.price} Tokens</p>
                                 <button
                                     type="button"
                                     onClick={() => console.log(prop)}
