@@ -99,18 +99,19 @@ export default function Gigs() {
         disabled={isPending} 
         
       >
-        {isPending ? 'Confirming...' : 'Buy'} 
+        {isPendingWrite ? 'Confirming...' : 'Buy'} 
       </button>
-      {/* {hash && <div className="text-white">Transaction Hash: {hash}</div>}
-      {isConfirming && <div className="text-white">Waiting for confirmation...</div>} 
-      {isConfirmed && <div className="text-white">Transaction confirmed.</div>} 
-      {error && (
-        <div>Error: {(error).shortMessage || error.message}</div>
-      )} */}
+
                             </div>
                         </div>
                     </div>
                 </section>
+                      {hash && <div className="text-black">Transaction Hash: {hash}</div>}
+      {isConfirming && <div className="text-black">Waiting for confirmation...</div>} 
+      {isConfirmed && <div className="text-black">Transaction confirmed.</div>} 
+      {error && (
+        <div className="text-black">Error: {(error).shortMessage || error.message}</div>
+      )}
             </div>
         </div>
     );
