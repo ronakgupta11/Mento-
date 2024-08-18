@@ -1,6 +1,5 @@
-"use client"
+"use client";
 import { useState } from "react";
-
 import { address, abi } from "../../constants";
 import styles from "../../styles/style";
 import { Navbar } from "../../components";
@@ -13,75 +12,115 @@ import {
     NumberInputStepper,
     NumberIncrementStepper,
     NumberDecrementStepper,
+    Select,
 } from "@chakra-ui/react";
-
-import { Heading } from "@chakra-ui/react";
+import { useWriteContract,useWaitForTransactionReceipt } from "wagmi";
 
 export default function Publish() {
+    const { 
+        data: hash,
+        error,
+        isPending, 
+        writeContract 
+      } = useWriteContract() 
+    
+
+    
+      const { isLoading: isConfirming, isSuccess: isConfirmed } = 
+        useWaitForTransactionReceipt({ 
+          hash, 
+        }) 
+
+        
+
     const [formInput, setFormInput] = useState({
         title: "",
         description: "",
-        startTime: "",
-        stringFlowRate: "",
+        banner: "",
+        time: "",
+        price: "",
+        paymentToken: "0x0000000000000000000000000000000000000000",
     });
 
-    console.log(formInput);
+    async function submit(e) { 
+        if (
+            (!formInput.title,
+            !formInput.description,
+            !formInput.time,
+            !formInput.price)
+        )
+            return;
+        // const meetingId = await createMeeting();
+        const meetingId = "aml-buiz-caa"
+        
+            
+            writeContract({
+              address: address,
+              abi,
+              functionName: 'createGig',
+              args: [formInput.title,
+                formInput.description,
+                formInput.time,
+                meetingId,
+                formInput.price,
+                formInput.banner,
+                formInput.paymentToken,],
+            })
+            setFormInput({
+                title: "",
+                description: "",
+                banner: "",
+                time: "",
+                price: "",
+                paymentToken: "0x0000000000000000000000000000000000000000",
+            })
+          } 
 
-    // async function publish() {
-    //     const meetingId = await createMeeting();
+//     async function publish() {
 
-    //     // const amountInWei = ethers.BigNumber.from(formInput.flowrate);
-    //     // const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
-    //     // const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
-    //     const calculatedFlowRate = 385802469135802;
 
-    //     if (
-    //         (!formInput.title,
-    //         !formInput.description,
-    //         !formInput.time,
-    //         !meetingId,
-    //         !formInput.stringFlowRate)
-    //     )
-    //         return;
+//     // const amountInWei = ethers.BigNumber.from(formInput.flowrate);
+//     // const monthlyAmount = ethers.utils.formatEther(amountInWei.toString());
+//     // const calculatedFlowRate = monthlyAmount * 3600 * 24 * 30;
+//     const calculatedFlowRate = 385802469135802;
 
-    //     const modal = new web3modal({
-    //         network: "mumbai",
-    //         cacheProvider: true,
-    //     });
-    //     const connection = await modal.connect();
-    //     const provider = new ethers.providers.Web3Provider(connection);
-    //     const signer = provider.getSigner();
-    //     const contract = new ethers.Contract(address, abi, signer);
-    //     const parseStringFlowRate = ethers.utils.parseEther(
-    //         formInput.stringFlowRate
-    //     );
-    //     const publish = await contract.createGig(
-    //         formInput.title,
-    //         formInput.description,
-    //         formInput.startTime,
-    //         meetingId,
-    //         calculatedFlowRate,
-    //         parseStringFlowRate,
-    //         {
-    //             gasLimit: 1000000,
-    //         }
-    //     );
-    //     await publish.wait();
 
-    //     console.log("published");
-    // }
 
-    // async function createMeeting() {
-    //   const response = await fetch(`http://localhost:3000/api/create-room`);
-    //   const resJson = await response.json();
-    //   const meetingId = resJson.data.roomId;
-    //   return meetingId;
-    // }
+//     const modal = new web3modal({
+//         network: "mumbai",
+//         cacheProvider: true,
+//     });
+//     const connection = await modal.connect();
+//     const provider = new ethers.providers.Web3Provider(connection);
+//     const signer = provider.getSigner();
+//     const contract = new ethers.Contract(address, abi, signer);
+//     const parseStringFlowRate = ethers.utils.parseEther(
+//         formInput.stringFlowRate
+//     );
+//     const publish = await contract.createGig(
+//         formInput.title,
+//         formInput.description,
+//         formInput.startTime,
+//         meetingId,
+//         calculatedFlowRate,
+//         parseStringFlowRate,
+//         {
+//             gasLimit: 1000000,
+//         }
+//     );
+//     await publish.wait();
 
-    // async function debug() {
-    //   const roomId = await createMeeting()
-    //     console.log(roomId);
-    // }
+//     console.log("published");
+// }
+
+async function createMeeting() {
+  const response = await fetch(`http://localhost:3000/api/create-room`);
+  const resJson = await response.json();
+  const meetingId = resJson.data.roomId;
+  return meetingId;
+}
+
+
 
     return (
         <div className="bg-primary w-full overflow-hidden min-h-screen">
@@ -94,8 +133,8 @@ export default function Publish() {
             <div className={`bg-primary ${styles.flexStart} mt-5 text-center`}>
                 <div className={`${styles.boxWidth}`}>
                     <h1 className="flex-1 font-poppins font-semibold ss:text-[72px] text-[52px] text-white ss:leading-[100.8px] leading-[75px]">
-                        Host your{" "}
-                        <span className="text-gradient">First Lecture</span>{" "}
+                        Host your First{" "}
+                        <span className="text-gradient">Mentorship Class</span>{" "}
                     </h1>
                 </div>
             </div>
@@ -112,7 +151,7 @@ export default function Publish() {
                             <div>
                                 <Stack gap={2}>
                                     <FormControl>
-                                        <FormLabel fontSize={20} mb={1}>
+                                        <FormLabel fontSize={20} mb={1} color="white">
                                             Title
                                         </FormLabel>
                                         <Input
@@ -121,7 +160,7 @@ export default function Publish() {
                                             borderRadius={8}
                                             py={2}
                                             px={2}
-                                            color={"black"}
+                                            color={"white"}
                                             name="title"
                                             placeholder="Title"
                                             required
@@ -133,17 +172,16 @@ export default function Publish() {
                                                 })
                                             }
                                         />
-                                        {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
                                     </FormControl>
                                     <FormControl>
-                                        <FormLabel>Description</FormLabel>
+                                        <FormLabel color="white">Description</FormLabel>
                                         <Input
                                             type="text"
                                             w="100%"
                                             borderRadius={8}
                                             py={2}
                                             px={2}
-                                            color={"black"}
+                                            color={"white"}
                                             name="description"
                                             placeholder="Description"
                                             required
@@ -155,42 +193,89 @@ export default function Publish() {
                                             }
                                             value={formInput.description}
                                         />
-                                        {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormLabel color="white">Banner</FormLabel>
+                                        <Input
+                                            type="text"
+                                            w="100%"
+                                            borderRadius={8}
+                                            py={2}
+                                            px={2}
+                                            color={"white"}
+                                            name="banner"
+                                            placeholder="Banner URI"
+                                            required
+                                            onChange={(e) =>
+                                                setFormInput({
+                                                    ...formInput,
+                                                    banner: e.target.value,
+                                                })
+                                            }
+                                            value={formInput.banner}
+                                        />
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormLabel color="white">Payment Token</FormLabel>
+                                        <Select
+                                            w="100%"
+                                            borderRadius={8}
+                                            py={2}
+                                            px={2}
+                                            color={"white"}
+                                            name="paymentToken"
+                                            placeholder="Select Payment Token"
+                                            required
+                                            onChange={(e) =>
+                                                setFormInput({
+                                                    ...formInput,
+                                                    paymentToken: e.target.value,
+                                                })
+                                            }
+                                            value={formInput.paymentToken}
+                                        >
+                                            <option value="0x0000000000000000000000000000000000000000">ETH</option>
+                                            <option value="0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48">USDC</option>
+                                            <option value="0xdAC17F958D2ee523a2206206994597C13D831ec7">USDT</option>
+                                            <option value="0xB8c77482e45F1F44dE1745F52C74426C631bDD52">BNB</option>
+                                            <option value="0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984">UNI</option>
+                                            <option value="0x85F17Cf997934a597031b2E18a9aB6ebD4B9f6a4">NEAR</option>
+                                            <option value="0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0">MATIC</option>
+                                            <option value="0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1">ARB</option>
+                                        </Select>
                                     </FormControl>
                                     <div className="flex gap-5">
                                         <FormControl className="flex-1">
-                                            <FormLabel>Meeting Time</FormLabel>
+                                            <FormLabel color="white">Meeting Time</FormLabel>
                                             <Input
                                                 type="datetime-local"
                                                 w="100%"
                                                 borderRadius={8}
                                                 py={2}
                                                 px={2}
-                                                color={"black"}
-                                                name="startTime"
+                                                color={"white"}
+                                                name="time"
                                                 placeholder="Meeting Time"
                                                 required
-                                                value={formInput.startTime}
+                                                value={formInput.time}
                                                 onChange={(e) =>
                                                     setFormInput({
                                                         ...formInput,
-                                                        startTime:
-                                                            e.target.value,
+                                                        time: e.target.value,
                                                     })
                                                 }
                                             />
-                                            {/* <FormHelperText>We'll never share your email.</FormHelperText> */}
                                         </FormControl>
                                         <FormControl className="flex-1">
-                                            <FormLabel>
-                                                Flow Rate(matic/hour)
+                                            <FormLabel color="white">
+                                                Price
                                             </FormLabel>
                                             <NumberInput
-                                                value={formInput.stringFlowRate}
+                                                value={formInput.price}
                                                 onChange={(rate) =>
                                                     setFormInput({
                                                         ...formInput,
-                                                        stringFlowRate: rate,
+                                                        price: rate,
                                                     })
                                                 }
                                             >
@@ -199,9 +284,9 @@ export default function Publish() {
                                                     borderRadius={8}
                                                     py={2}
                                                     px={2}
-                                                    color={"black"}
-                                                    name="flowrate"
-                                                    placeholder="matic/hour"
+                                                    color={"white"}
+                                                    name="price"
+                                                    placeholder="Price"
                                                     required
                                                 />
                                                 <NumberInputStepper>
@@ -214,13 +299,23 @@ export default function Publish() {
                                 </Stack>
                             </div>
                             <div className={`mt-8`}>
-                                <button
-                                    type="button"
-                                    onClick={()=>console.log("publish")}
-                                    className={`py-4 px-6 font-poppins font-medium text-[18px] text-primary bg-blue-gradient rounded-[10px] outline-none ${styles}`}
-                                >
-                                    Host Class
-                                </button>
+                            
+                                <button 
+                                type="button"
+                                onClick={() => submit()}
+                                className={`py-4 px-6 font-poppins font-medium text-[18px] text-primary bg-blue-gradient rounded-[10px] outline-none ${styles}`}
+        disabled={isPending} 
+        
+      >
+        {isPending ? 'Confirming...' : 'Host Class'} 
+      </button>
+      {hash && <div className="text-white">Transaction Hash: {hash}</div>}
+      {isConfirming && <div className="text-white">Waiting for confirmation...</div>} 
+      {isConfirmed && <div className="text-white">Transaction confirmed.</div>} 
+      {error && (
+        <div>Error: {(error).shortMessage || error.message}</div>
+      )}
+
                             </div>
                         </div>
                     </section>

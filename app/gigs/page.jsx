@@ -5,11 +5,23 @@ import styles from "../../styles/style";
 import { Navbar } from "../../components";
 import { useReadContract } from 'wagmi'
 import { sepolia } from "viem/chains";
-import { useWriteContract } from "wagmi";
+import { useWriteContract,useWaitForTransactionReceipt } from "wagmi";
 
 export default function Gigs() {
   const [gigs, setGigs] = useState([]);
-  const {writeContract} = useWriteContract()
+  const { 
+    data: hash,
+    error:errorWrite,
+    isPending:isPendingWrite, 
+    writeContract 
+  } = useWriteContract() 
+
+
+
+  const { isLoading: isConfirming, isSuccess: isConfirmed } = 
+    useWaitForTransactionReceipt({ 
+      hash, 
+    }) 
   
   const { isPending, isError, data, error } = useReadContract({
     abi: abi,
@@ -42,18 +54,9 @@ export default function Gigs() {
   }, [data]);
 
   function Card(prop) {
-    const add0 = (t) => (t < 10 ? `0${t}` : String(t));
-    const getDateStandard = (dt) => {
-      const y = dt.getFullYear();
-      const m = add0(dt.getMonth() + 1);
-      const d = add0(dt.getDate());
-      const w = dt.toDateString().substring(0, 3);
-      const h = add0(dt.getHours());
-      const min = add0(dt.getMinutes());
-      return `${d}-${m}-${y} ${w} ${h}:${min}`;
-    };
 
-    const dateTime = new Date(parseInt(prop.time) * 1000);
+
+
 
     return (
         <div className={`bg-primary ${styles.flexStart} w-[70%] mx-auto mt-6 mb-6 px-[1.5rem]`}>
@@ -75,26 +78,35 @@ export default function Gigs() {
                                     {prop.description}
                                 </p>
                                 <p className="mt-3 text-gray-500">
-                                    Date: {getDateStandard(dateTime)}
+                                    Date: {prop.time}
                                 </p>
                             </div>
                             <div className="flex flex-1 justify-center items-end flex-col">
                                 <p className="text-center text-black">Price: {prop.price} Tokens</p>
-                                <button
-                                    type="button"
-                                    onClick={() =>writeContract({ 
-                                        abi,
-                                        address,
-                                        functionName: 'buy',
-                                        args: [
-                                          prop.id
-                                        ],
-                                        value:prop.price
-                                     })}
-                                    className={`py-4 mt-2 px-12 font-poppins font-medium text-[18px] text-primary bg-blue-gradient rounded-[10px] outline-none ${styles}`}
-                                >
-                                    Buy
-                                </button>
+                                <button 
+                                type="button"
+                                onClick={() =>writeContract({ 
+                                  abi,
+                                  address,
+                                  functionName: 'buy',
+                                  args: [
+                                    prop.id
+                                  ],
+                                  value:prop.price
+                               })}
+                                className={`py-4 mt-2 px-12 font-poppins font-medium text-[18px] text-primary bg-blue-gradient rounded-[10px] outline-none ${styles}`}
+
+        disabled={isPending} 
+        
+      >
+        {isPending ? 'Confirming...' : 'Buy'} 
+      </button>
+      {/* {hash && <div className="text-white">Transaction Hash: {hash}</div>}
+      {isConfirming && <div className="text-white">Waiting for confirmation...</div>} 
+      {isConfirmed && <div className="text-white">Transaction confirmed.</div>} 
+      {error && (
+        <div>Error: {(error).shortMessage || error.message}</div>
+      )} */}
                             </div>
                         </div>
                     </div>
@@ -105,9 +117,7 @@ export default function Gigs() {
 }
 
 
-  if (isPending) {
-    return <span>Loading...</span>;
-  }
+
 
   if (isError) {
     return <span>Error: {error.message}</span>;
@@ -129,6 +139,7 @@ export default function Gigs() {
       </div>
       <div>
         <div className="pb-20">
+{isPending && <div> Loading .... </div>}
           {gigs.map((gig, k) => (
             <Card
 
