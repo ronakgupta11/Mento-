@@ -15,7 +15,28 @@ export default function Gigs() {
     isPending:isPendingWrite, 
     writeContract 
   } = useWriteContract() 
-
+  function getTokenName(address) {
+    switch (address) {
+        case "0x0000000000000000000000000000000000000000":
+            return "Wei";
+        case "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48":
+            return "USDC";
+        case "0xdAC17F958D2ee523a2206206994597C13D831ec7":
+            return "USDT";
+        case "0xB8c77482e45F1F44dE1745F52C74426C631bDD52":
+            return "BNB";
+        case "0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984":
+            return "UNI";
+        case "0x85F17Cf997934a597031b2E18a9aB6ebD4B9f6a4":
+            return "NEAR";
+        case "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0":
+            return "MATIC";
+        case "0xB50721BCf8d664c30412Cfbc6cf7a15145234ad1":
+            return "ARB";
+        default:
+            return "Unknown Token";
+    }
+}
 
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } = 
@@ -82,7 +103,8 @@ export default function Gigs() {
                                 </p>
                             </div>
                             <div className="flex flex-1 justify-center items-end flex-col">
-                                <p className="text-center text-black">Price: {prop.price} Tokens</p>
+                                <p className="text-center text-black">Price: {prop.price.toString()} {getTokenName(prop.paymentToken)}</p>
+                                {console.log(prop.price)}
                                 <button 
                                 type="button"
                                 onClick={() =>writeContract({ 
@@ -142,6 +164,7 @@ export default function Gigs() {
         <div className="pb-20">
 {isPending && <div> Loading .... </div>}
           {gigs.map((gig, k) => (
+
             <Card
 
               key={k}
@@ -155,6 +178,7 @@ export default function Gigs() {
               nftTokenId={gig.nftTokenId}
               attendees={gig.attendees}
               banner = {gig.banner}
+              paymentToken = {gig.paymentToken}
             />
           ))}
         </div>
