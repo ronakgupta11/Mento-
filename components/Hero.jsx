@@ -35,7 +35,7 @@ const Hero = () => {
            For Online Mentorship.
         </h1>
         <p className={`${styles.paragraph} max-w-[470px] mt-5`}>
-          Embrace the future of online education with our Web3.0 teaching
+          Embrace the future of online education with our Web3.0 mentorship
           platform - pay per second for fair and transparent payment system!
         </p>
       </div>
